@@ -1,35 +1,42 @@
-// script.js
-// Auto-uses 'pdfs/list.json' if present (push this file when you upload new PDFs).
-// Otherwise edit the `manualPdfs` array below.
-
+// script.js (updated)
 const manualPdfs = [
   { title: "Sample Note 1 - 2025-09-04", file: "pdfs/sample1.pdf" },
-  { title: "Sample Note 2 - 2025-09-04", file: "pdfs/sample2.pdf" }
+  // you can put root file entries here too:
+  // { title: "MCQs - OS", file: "2025-09-04-mcqs_os.pdf", date: "2025-09-04" }
 ];
 
 const listElement = document.getElementById("pdf-list");
 
-async function loadAndRender() {
-  let pdfs = manualPdfs;
+async function tryFetch(path) {
   try {
-    const resp = await fetch('pdfs/list.json', {cache: "no-store"});
+    const resp = await fetch(path, { cache: "no-store" });
     if (resp.ok) {
       const data = await resp.json();
-      if (Array.isArray(data) && data.length) {
-        pdfs = data;
-      }
+      if (Array.isArray(data) && data.length) return data;
     }
-  } catch (err) {
-    // ignore and fallback to manual list
-    console.log("No list.json found or failed to fetch, using manual list.");
+  } catch (e) { /* ignore */ }
+  return null;
+}
+
+async function loadAndRender() {
+  let pdfs = null;
+
+  // try pdfs/list.json first (old behavior)
+  pdfs = await tryFetch('pdfs/list.json');
+  if (!pdfs) {
+    // then try list.json in repo root
+    pdfs = await tryFetch('list.json');
+  }
+  if (!pdfs) {
+    // fallback to manual list
+    pdfs = manualPdfs;
   }
 
-  if (!pdfs.length) {
-    listElement.innerHTML = '<div class="alert alert-warning">No PDF notes found. Add files to the <code>pdfs/</code> folder and update <code>pdfs/list.json</code> or edit <code>script.js</code>.</div>';
+  if (!pdfs || !pdfs.length) {
+    listElement.innerHTML = '<div class="alert alert-warning">No PDF notes found.</div>';
     return;
   }
 
-  // render list
   listElement.innerHTML = '';
   pdfs.forEach(item => {
     const a = document.createElement('a');
