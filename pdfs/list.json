@@ -1,12 +1,8 @@
 [
   {
-    "title": "Sample Note 1 - 2025-09-04",
-    "file": "pdfs/sample1.pdf",
-    "date": "2025-09-04"
-  },
-  {
-    "title": "Sample Note 2 - 2025-09-04",
-    "file": "pdfs/sample2.pdf",
-    "date": "2025-09-04"
-  }
+  "title": "MCQs - Operating System (mcqs_os)",
+  "file": "pdfs/2025-09-04-mcqs_os.pdf",
+  "date": "2025-09-04"
+}
+
 ]
